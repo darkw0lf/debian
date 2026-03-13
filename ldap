@@ -1,0 +1,26 @@
+# Authentification LDAP (Bind)
+ldapwhoami -x -H ldaps://ldap.entreprise.com -D "uid=alice,ou=users,dc=entreprise,dc=com" -W
+
+# Recherche d'un utilisateur
+ldapsearch -x -H ldaps://ldap.entreprise.com \
+  -D "cn=svc-ldap,ou=service-accounts,dc=entreprise,dc=com" \
+  -W -b "ou=users,dc=entreprise,dc=com" \
+  "(uid=alice)" cn mail telephoneNumber memberOf
+
+# Vérifier l'appartenance à un groupe
+ldapsearch -x -H ldaps://ldap.entreprise.com \
+  -D "cn=svc-ldap,ou=service-accounts,dc=entreprise,dc=com" \
+  -W -b "ou=groups,dc=entreprise,dc=com" \
+  "(&(objectClass=groupOfNames)(member=uid=alice,ou=users,dc=entreprise,dc=com))" cn
+
+# Exemple entrée LDIF (ajout utilisateur)
+dn: uid=alice,ou=users,dc=entreprise,dc=com
+objectClass: inetOrgPerson
+objectClass: posixAccount
+uid: alice
+cn: Alice Martin
+sn: Martin
+mail: alice@entreprise.com
+uidNumber: 1001
+gidNumber: 100
+homeDirectory: /home/alice
